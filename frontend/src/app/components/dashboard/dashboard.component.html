@@ -1,0 +1,13 @@
+<div class="dashboard-container">
+  <app-header [user]="currentUser" (logout)="logout()"></app-header>
+
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav mode="side" opened>
+      <app-sidenav></app-sidenav>
+    </mat-sidenav>
+
+    <mat-sidenav-content class="content">
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

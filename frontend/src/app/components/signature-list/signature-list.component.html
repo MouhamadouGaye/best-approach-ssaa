@@ -1,0 +1,258 @@
+<!-- <div class="signature-list-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>My Signatures</mat-card-title>
+      <div class="spacer"></div>
+      <button
+        mat-raised-button
+        color="primary"
+        *ngIf="!showCreateSignature"
+        (click)="toggleCreateSignature()"
+      >
+        <mat-icon>add</mat-icon>
+        Create New Signature
+      </button>
+      <button
+        mat-icon-button
+        color="warn"
+        *ngIf="showCreateSignature"
+        (click)="toggleCreateSignature()"
+        aria-label="Cancel creating signature"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-card-header>
+
+    <mat-card-content>
+ 
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading signatures...</p>
+      </div>
+
+
+      <div *ngIf="error && !loading" class="error-container">
+        <mat-icon color="warn">error</mat-icon>
+        <p>{{ error }}</p>
+        <button mat-button color="primary" (click)="loadSignatures()">
+          Retry
+        </button>
+      </div>
+
+      <div
+        *ngIf="showCreateSignature && !loading"
+        class="create-signature-container"
+      >
+        <h3>Create New Signature</h3>
+        <app-signature-pad
+          (signatureCreated)="onSignatureCreated($event)"
+        ></app-signature-pad>
+      </div>
+
+      <div *ngIf="!showCreateSignature && !loading" class="signatures-grid">
+        <div *ngIf="signatures.length === 0" class="no-signatures">
+          <mat-icon>gesture</mat-icon>
+          <p>You don't have any signatures yet.</p>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="toggleCreateSignature()"
+          >
+            Create your first signature
+          </button>
+        </div>
+
+        <mat-card
+          *ngFor="let signature of signatures"
+          class="signature-card"
+          [class.selected]="isSelected(signature)"
+          (click)="selectSignature(signature)"
+        >
+          <div class="signature-image">
+            <img [src]="signature.dataUrl" alt="{{ signature.name }}" />
+            <div class="default-badge" *ngIf="signature.isDefault">
+              <mat-icon>check_circle</mat-icon>
+              <span>Default</span>
+            </div>
+          </div>
+
+          <div class="signature-details">
+            <mat-form-field appearance="outline" class="signature-name-field">
+              <mat-label>Signature Name</mat-label>
+              <input
+                matInput
+                [value]="signature.name"
+                (blur)="renameSignature(signature, $event.target.value)"
+              />
+            </mat-form-field>
+
+            <div class="signature-actions">
+              <button
+                mat-icon-button
+                color="primary"
+                [disabled]="signature.isDefault"
+                matTooltip="Set as Default"
+                (click)="
+                  setDefaultSignature(signature); $event.stopPropagation()
+                "
+              >
+                <mat-icon>star_border</mat-icon>
+              </button>
+
+              <button
+                mat-icon-button
+                color="warn"
+                matTooltip="Delete Signature"
+                (click)="deleteSignature(signature, $event)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div> -->
+
+<div class="signature-list-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>My Signatures</mat-card-title>
+      <div class="spacer"></div>
+      <button
+        mat-raised-button
+        color="primary"
+        [routerLink]="['/signatures/create']"
+      >
+        <mat-icon>add</mat-icon>
+        Create New Signature
+      </button>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Filter Container -->
+      <div class="filter-container">
+        <mat-form-field appearance="outline">
+          <mat-label>Search signatures</mat-label>
+          <input
+            matInput
+            placeholder="Search by name"
+            [(ngModel)]="searchQuery"
+            (keyup)="applyFilter()"
+          />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- Loading State -->
+      <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Loading your signatures...</p>
+      </div>
+
+      <!-- Error State -->
+      <div class="error-container" *ngIf="hasError">
+        <mat-icon color="warn">error_outline</mat-icon>
+        <p>{{ errorMessage }}</p>
+        <button mat-raised-button color="primary" (click)="loadSignatures()">
+          Try Again
+        </button>
+      </div>
+
+      <!-- Create New Signature Prompt -->
+      <div
+        class="create-signature-container"
+        *ngIf="!isLoading && !hasError && signatures.length === 0"
+      >
+        <div class="empty-state-container">
+          <mat-icon>draw</mat-icon>
+          <h3>No signatures yet</h3>
+          <p>Create your first signature to sign documents electronically</p>
+          <button
+            mat-raised-button
+            color="primary"
+            [routerLink]="['/signatures/create']"
+          >
+            Create New Signature
+          </button>
+        </div>
+      </div>
+
+      <!-- Signatures Grid -->
+      <div
+        class="signatures-grid"
+        *ngIf="!isLoading && !hasError && signatures.length > 0"
+      >
+        <mat-card
+          class="signature-card"
+          *ngFor="let signature of filteredSignatures"
+          [class.selected]="selectedSignatureId === signature.id?.toString()"
+          (click)="selectSignature(signature)"
+        >
+          <div class="signature-image">
+            <img [src]="signature.imageUrl" [alt]="signature.user" />
+            <span class="default-badge" *ngIf="signature.isDefault"
+              >Default</span
+            >
+
+            <div class="signature-actions-menu">
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                (click)="$event.stopPropagation()"
+              >
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button
+                  mat-menu-item
+                  (click)="editSignature(signature); $event.stopPropagation()"
+                >
+                  <mat-icon>edit</mat-icon>
+                  <span>Edit</span>
+                </button>
+                <button
+                  mat-menu-item
+                  (click)="setAsDefault(signature); $event.stopPropagation()"
+                  *ngIf="!signature.isDefault"
+                >
+                  <mat-icon>star</mat-icon>
+                  <span>Set as Default</span>
+                </button>
+                <button
+                  mat-menu-item
+                  (click)="deleteSignature(signature); $event.stopPropagation()"
+                >
+                  <mat-icon>delete</mat-icon>
+                  <span>Delete</span>
+                </button>
+              </mat-menu>
+            </div>
+          </div>
+
+          <div class="signature-info">
+            <span class="signature-name">{{ signature.user }}</span>
+            <span class="signature-date"
+              >Created on {{ signature.createdAt | date : "mediumDate" }}</span
+            >
+          </div>
+        </mat-card>
+      </div>
+
+      <!-- Pagination -->
+      <div
+        class="pagination-container"
+        *ngIf="!isLoading && !hasError && totalPages > 1"
+      >
+        <mat-paginator
+          [length]="totalItems"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="[8, 16, 24, 32]"
+          (page)="onPageChange($event)"
+        >
+        </mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

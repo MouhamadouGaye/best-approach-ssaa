@@ -1,0 +1,323 @@
+<!-- <div class="document-viewer-container">
+  <div class="document-header">
+    <div class="document-title">
+      <button class="back-btn" (click)="goBack()">
+        <i class="fa fa-arrow-left"></i>
+      </button>
+      <h2>{{ document?.filename || "Loading document..." }}</h2>
+    </div>
+
+    <div class="document-actions">
+      <button
+        class="action-btn"
+        (click)="downloadDocument()"
+        [disabled]="!document"
+      >
+        <i class="fa fa-download"></i> Download
+      </button>
+
+      <button
+        class="action-btn primary"
+        (click)="startSignaturePlacement()"
+        [disabled]="!document || !signatureDataUrl || isPlacingSignature"
+      >
+        <i class="fa fa-plus"></i> Add Signature
+      </button>
+
+      <button
+        class="action-btn cancel"
+        *ngIf="isPlacingSignature"
+        (click)="cancelSignaturePlacement()"
+      >
+        <i class="fa fa-times"></i> Cancel
+      </button>
+
+      <button
+        class="action-btn success"
+        (click)="saveSignatures()"
+        [disabled]="
+          !document || !signatureDataUrl || signaturePositions.length === 0
+        "
+      >
+        <i class="fa fa-check"></i> Save Signatures
+      </button>
+    </div>
+  </div>
+
+  <div class="document-content">
+    <div class="pdf-controls">
+      <div class="page-navigation">
+        <button [disabled]="currentPage <= 1" (click)="prevPage()">
+          <i class="fa fa-chevron-left"></i>
+        </button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button [disabled]="currentPage >= totalPages" (click)="nextPage()">
+          <i class="fa fa-chevron-right"></i>
+        </button>
+      </div>
+
+      <div class="zoom-controls">
+        <button (click)="zoomOut()">
+          <i class="fa fa-search-minus"></i>
+        </button>
+        <span>{{ (zoom * 100).toFixed(0) }}%</span>
+        <button (click)="zoomIn()">
+          <i class="fa fa-search-plus"></i>
+        </button>
+      </div>
+
+      <div class="rotation-control">
+        <button (click)="rotateClockwise()">
+          <i class="fa fa-rotate-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="pdf-viewer-area">
+      <div *ngIf="loading" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Loading document...</p>
+      </div>
+
+      <div *ngIf="error" class="error-message">
+        <p>{{ error }}</p>
+        <button (click)="loadDocument()">Try Again</button>
+      </div>
+
+      <div
+        #pdfContainer
+        class="pdf-container"
+        (click)="handleContainerClick($event)"
+      ></div>
+    </div>
+
+    <div class="signature-sidebar" [class.expanded]="signatureDataUrl">
+      <h3>Your Signature</h3>
+
+      <app-signature-pad
+        (signatureCreated)="onSignatureCreated($event)"
+        [signatureData]="signatureDataUrl"
+      >
+      </app-signature-pad>
+
+      <div
+        class="signature-instructions"
+        *ngIf="signatureDataUrl && signaturePositions.length === 0"
+      >
+        <p>
+          Click "Add Signature" button and then click on the document where you
+          want to place your signature.
+        </p>
+      </div>
+
+      <div class="signature-list" *ngIf="signaturePositions.length > 0">
+        <h4>Signature Placements</h4>
+        <ul>
+          <li
+            *ngFor="let position of signaturePositions; let i = index"
+            [class.active]="selectedSignaturePosition === position"
+          >
+            Signature on page {{ position.pageNum }}
+            <button class="remove-btn" (click)="removeSignature(i)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<!-- File: app/components/document-viewer/document-viewer.component.html -->
+<div class="document-viewer-container">
+  <div class="document-header">
+    <div class="document-title">
+      <button class="back-btn" (click)="goBack()">
+        <i class="fa fa-arrow-left"></i>
+      </button>
+      <h2>{{ document?.filename || "Loading document..." }}</h2>
+    </div>
+
+    <div class="document-actions">
+      <button
+        class="action-btn"
+        (click)="downloadDocument()"
+        [disabled]="!document"
+      >
+        <i class="fa fa-download"></i> Download
+      </button>
+
+      <button
+        class="action-btn primary"
+        (click)="startSignaturePlacement()"
+        [disabled]="!document || !signatureDataUrl || isPlacingSignature"
+      >
+        <i class="fa fa-plus"></i> Add Signature
+      </button>
+
+      <button
+        class="action-btn cancel"
+        *ngIf="isPlacingSignature"
+        (click)="cancelSignaturePlacement()"
+      >
+        <i class="fa fa-times"></i> Cancel
+      </button>
+
+      <button
+        class="action-btn success"
+        (click)="saveSignatures()"
+        [disabled]="
+          !document || !signatureDataUrl || signaturePositions.length === 0
+        "
+      >
+        <i class="fa fa-check"></i> Save Signatures
+      </button>
+    </div>
+  </div>
+
+  <div class="document-content">
+    <div class="pdf-controls">
+      <div class="page-navigation">
+        <button [disabled]="currentPage <= 1" (click)="prevPage()">
+          <i class="fa fa-chevron-left"></i>
+        </button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button [disabled]="currentPage >= totalPages" (click)="nextPage()">
+          <i class="fa fa-chevron-right"></i>
+        </button>
+      </div>
+
+      <div class="zoom-controls">
+        <button (click)="zoomOut()">
+          <i class="fa fa-search-minus"></i>
+        </button>
+        <span>{{ (zoom * 100).toFixed(0) }}%</span>
+        <button (click)="zoomIn()">
+          <i class="fa fa-search-plus"></i>
+        </button>
+      </div>
+
+      <div class="rotation-control">
+        <button (click)="rotateClockwise()">
+          <i class="fa fa-rotate-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="pdf-viewer-area">
+      <div *ngIf="loading" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Loading document...</p>
+      </div>
+
+      <div *ngIf="error" class="error-message">
+        <p>{{ error }}</p>
+        <button (click)="loadDocument()">Try Again</button>
+      </div>
+
+      <div
+        #pdfContainer
+        class="pdf-container"
+        (click)="handleContainerClick($event)"
+      ></div>
+    </div>
+
+    <div class="signature-sidebar" [class.expanded]="signatureDataUrl">
+      <h3>Your Signature</h3>
+
+      <app-signature-pad (signatureCreated)="onSignatureCreated($event)">
+      </app-signature-pad>
+
+      <div
+        class="signature-instructions"
+        *ngIf="signatureDataUrl && signaturePositions.length === 0"
+      >
+        <p>
+          Click "Add Signature" button and then click on the document where you
+          want to place your signature.
+        </p>
+      </div>
+
+      <div class="signature-list" *ngIf="signaturePositions.length > 0">
+        <h4>Signature Placements</h4>
+        <ul>
+          <li
+            *ngFor="let position of signaturePositions; let i = index"
+            [class.active]="selectedSignaturePosition === position"
+          >
+            Signature on page {{ position.pageNum }}
+            <button class="remove-btn" (click)="removeSignature(i)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- File: app/components/document-viewer/document-viewer.component.html -->
+<!-- <div class="document-viewer-container">
+  <div class="document-header">
+    <div class="document-title">
+      <button class="back-btn" (click)="goBack()">
+        <i class="fa fa-arrow-left"></i>
+      </button>
+      <h2>{{ document?.filename || "Loading document..." }}</h2>
+    </div>
+
+    <div class="document-actions">
+      <button[signatureData]="signatureDataUrl"
+        class="action-btn"
+        (click)="downloadDocument()"
+        [disabled]="!document"
+      >
+        <i class="fa fa-download"></i> Download
+      </button>
+      <button
+        class="action-btn primary"
+        (click)="startSignaturePlacement()"
+        [disabled]="!document || !signatureDataUrl || isPlacingSignature"
+      >
+        <i class="fa fa-plus"></i> Add Signature
+      </button>
+      <button
+        class="action-btn cancel"
+        *ngIf="isPlacingSignature"
+        (click)="cancelSignaturePlacement()"
+      >
+        <i class="fa fa-times"></i> Cancel
+      </button>
+      <button
+        class="action-btn success"
+        (click)="saveSignatures()"
+        [disabled]="
+          !document || !signatureDataUrl || signaturePositions.length === 0
+        "
+      >
+        <i class="fa fa-check"></i> Save Signatures
+      </button>
+    </div>
+  </div>
+
+  <div class="document-content">
+    <div *ngIf="loading" class="loading-overlay">
+      <div class="spinner"></div>
+      <p>Loading document...</p>
+    </div>
+
+    <div *ngIf="error" class="error-message">
+      <p>{{ error }}</p>
+      <button (click)="loadDocument()">Try Again</button>
+    </div>
+
+    <div class="pdf-viewer-area">
+      <div #pdfContainer class="pdf-container" *ngIf="pdfSrc">
+        <pdf-viewer
+          [src]="pdfSrc"
+          style="width: 100%; height: 90vh"
+        ></pdf-viewer>
+      </div>
+    </div>
+  </div>
+</div> -->

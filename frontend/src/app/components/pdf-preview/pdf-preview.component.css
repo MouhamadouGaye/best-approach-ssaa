@@ -1,0 +1,51 @@
+/* .sign-button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.sign-button:hover {
+  background-color: #0056b3;
+} */
+
+.sign-button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.sign-button:hover {
+  background-color: #0056b3;
+}
+
+.navigation {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+button {
+  padding: 10px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+button:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}

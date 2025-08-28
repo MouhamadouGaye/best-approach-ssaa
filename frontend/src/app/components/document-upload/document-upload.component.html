@@ -1,0 +1,146 @@
+<div class="upload-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Upload Document</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
+        <!-- Drag & Drop Area -->
+        <div
+          class="drag-area"
+          [class.has-file]="selectedFile"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)"
+          (click)="fileInput.click()"
+        >
+          <input
+            #fileInput
+            type="file"
+            hidden
+            accept="application/pdf"
+            (change)="onFileSelected($event)"
+          />
+
+          <div class="drag-content" *ngIf="!selectedFile">
+            <mat-icon class="upload-icon">cloud_upload</mat-icon>
+            <h3>Drag & Drop PDF file here</h3>
+            <p>or click to browse files</p>
+            <p class="file-type-hint">Accepts PDF files up to 10MB</p>
+          </div>
+
+          <div class="file-preview" *ngIf="selectedFile">
+            <div class="preview-container">
+              <img *ngIf="previewUrl" [src]="previewUrl" alt="PDF Preview" />
+            </div>
+            <div class="file-info">
+              <h4>{{ selectedFile.name }}</h4>
+              <p>{{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB</p>
+              <button
+                type="button"
+                mat-icon-button
+                color="warn"
+                (click)="removeFile(); $event.stopPropagation()"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <div class="upload-error" *ngIf="uploadError">
+            <mat-error>{{ uploadError }}</mat-error>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <mat-progress-bar
+          *ngIf="isUploading"
+          mode="determinate"
+          [value]="uploadProgress"
+        >
+        </mat-progress-bar>
+
+        <!-- Document Info Fields -->
+        <div class="form-fields">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Document Title</mat-label>
+            <input
+              matInput
+              formControlName="title"
+              placeholder="Enter document title"
+            />
+            <mat-error *ngIf="uploadForm.get('title')?.hasError('required')">
+              Title is required
+            </mat-error>
+            <mat-error *ngIf="uploadForm.get('title')?.hasError('maxlength')">
+              Title cannot exceed 100 characters
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description (Optional)</mat-label>
+            <textarea
+              matInput
+              formControlName="description"
+              placeholder="Enter document description"
+              rows="3"
+            >
+            </textarea>
+            <mat-error
+              *ngIf="uploadForm.get('description')?.hasError('maxlength')"
+            >
+              Description cannot exceed 500 characters
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Tags (Optional)</mat-label>
+            <input
+              matInput
+              formControlName="tags"
+              placeholder="Enter tags separated by commas"
+            />
+            <mat-hint>Example: contract, legal, finance</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Expiry Date (Optional)</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker"
+              formControlName="expiryDate"
+              placeholder="MM/DD/YYYY"
+            />
+            <mat-hint>Leave blank if no expiry date</mat-hint>
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button
+        type="button"
+        mat-button
+        (click)="cancel()"
+        [disabled]="isUploading"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        mat-raised-button
+        color="primary"
+        (click)="uploadDocument()"
+        [disabled]="uploadForm.invalid || !selectedFile || isUploading"
+      >
+        Upload
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

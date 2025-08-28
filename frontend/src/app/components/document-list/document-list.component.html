@@ -1,0 +1,124 @@
+<!-- File: app/components/document-list/document-list.component.html -->
+<div class="document-list-container">
+  <div class="document-list-header">
+    <h2>My Documents</h2>
+    <div class="action-buttons">
+      <button class="refresh-btn" (click)="refreshDocuments()">
+        <i class="fa fa-refresh"></i> Refresh
+      </button>
+      <button class="upload-btn" (click)="uploadNewDocument()">
+        <i class="fa fa-upload"></i> Upload New Document
+      </button>
+    </div>
+  </div>
+
+  <div class="filters-container">
+    <div class="filter-group">
+      <label>Status:</label>
+      <select
+        [(ngModel)]="statusFilter"
+        (change)="onStatusFilterChange(statusFilter)"
+      >
+        <option value="all">All Documents</option>
+        <option value="pending">Pending Signature</option>
+        <option value="signed">Signed</option>
+      </select>
+    </div>
+
+    <div class="sort-group">
+      <span>Sort by:</span>
+      <button
+        [class.active]="sortBy === 'uploadedAt'"
+        (click)="onSortChange('uploadedAt')"
+      >
+        Date
+        <i
+          class="fa"
+          [ngClass]="
+            sortBy === 'uploadedAt'
+              ? sortDirection === 'asc'
+                ? 'fa-arrow-up'
+                : 'fa-arrow-down'
+              : ''
+          "
+        ></i>
+      </button>
+      <button
+        [class.active]="sortBy === 'filename'"
+        (click)="onSortChange('filename')"
+      >
+        Name
+        <i
+          class="fa"
+          [ngClass]="
+            sortBy === 'filename'
+              ? sortDirection === 'asc'
+                ? 'fa-arrow-up'
+                : 'fa-arrow-down'
+              : ''
+          "
+        ></i>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading documents...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+    <button (click)="loadDocuments()">Try Again</button>
+  </div>
+
+  <div *ngIf="!loading && !error && documents.length === 0" class="empty-state">
+    <div class="empty-icon">
+      <i class="fa fa-file-o"></i>
+    </div>
+    <h3>No Documents Found</h3>
+    <p>
+      You haven't uploaded any documents yet or no documents match your filter
+      criteria.
+    </p>
+    <button (click)="uploadNewDocument()">Upload Your First Document</button>
+  </div>
+
+  <div *ngIf="!loading && !error && documents.length > 0" class="document-grid">
+    <div
+      *ngFor="let doc of documents"
+      class="document-card"
+      (click)="viewDocument(doc)"
+    >
+      <div class="document-icon">
+        <i class="fa fa-file-pdf-o"></i>
+      </div>
+      <div class="document-info">
+        <h3 class="document-title">{{ doc.filename }}</h3>
+        <p class="document-date">
+          Uploaded: {{ doc.uploadedAt | date : "short" }}
+        </p>
+        <div class="document-status">
+          <span [ngClass]="getStatusClass(doc.status)">
+            {{ doc.status || "Processing" }}
+          </span>
+        </div>
+      </div>
+      <div class="document-actions">
+        <button
+          *ngIf="doc.status !== 'signed'"
+          class="sign-btn"
+          (click)="signDocument(doc); $event.stopPropagation()"
+        >
+          <i class="fa fa-pencil"></i> Sign
+        </button>
+        <button class="download-btn" (click)="downloadDocument(doc, $event)">
+          <i class="fa fa-download"></i>
+        </button>
+        <button class="delete-btn" (click)="deleteDocument(doc, $event)">
+          <i class="fa fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

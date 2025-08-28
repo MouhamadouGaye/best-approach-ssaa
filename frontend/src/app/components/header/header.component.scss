@@ -1,0 +1,62 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
+  .menu-button {
+    margin-right: 16px;
+  }
+
+  .app-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  .user-menu-button {
+    display: flex;
+    align-items: center;
+    
+    .username {
+      margin: 0 8px;
+      max-width: 150px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      @media screen and (max-width: 600px) {
+        display: none;
+      }
+    }
+  }
+}
+// // File: app/components/header/header.component.scss
+// .header {
+//     display: flex;
+//     align-items: center;
+    
+//     .app-title {
+//       font-size: 1.2rem;
+//       font-weight: 500;
+//     }
+    
+//     .spacer {
+//       flex: 1;
+//     }
+    
+//     .user-info {
+//       display: flex;
+//       align-items: center;
+      
+//       span {
+//         margin-right: 10px;
+//       }
+//     }
+//   }

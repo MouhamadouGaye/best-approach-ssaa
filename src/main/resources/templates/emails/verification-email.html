@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify Your Email Address</title>
+    <style>
+      /* Reset and base styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f8f9fa;
+        padding: 20px;
+      }
+
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .email-header {
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+        padding: 40px 30px;
+        text-align: center;
+        color: white;
+      }
+
+      .email-header h1 {
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+
+      .email-header p {
+        font-size: 16px;
+        opacity: 0.9;
+      }
+
+      .email-content {
+        padding: 40px 30px;
+      }
+
+      .verification-section {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .verification-section h2 {
+        font-size: 22px;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 20px;
+      }
+
+      .verification-section p {
+        font-size: 16px;
+        color: #4a5568;
+        margin-bottom: 15px;
+      }
+
+      .verification-code {
+        background: #ebf8ff;
+        border: 2px dashed #4299e1;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 25px 0;
+        text-align: center;
+      }
+
+      .code {
+        font-size: 24px;
+        font-weight: 600;
+        color: #2b6cb0;
+        letter-spacing: 2px;
+        margin: 10px 0;
+      }
+
+      .cta-button {
+        display: inline-block;
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+        color: white;
+        text-decoration: none;
+        padding: 15px 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        margin: 20px 0;
+      }
+
+      .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .info-box {
+        background: #f7fafc;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #4299e1;
+        margin: 25px 0;
+      }
+
+      .info-box h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 10px;
+      }
+
+      .info-box p {
+        font-size: 14px;
+        color: #4a5568;
+        margin-bottom: 8px;
+      }
+
+      .expiry-notice {
+        background: #fff5f5;
+        border: 1px solid #fed7d7;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 20px 0;
+        text-align: center;
+      }
+
+      .expiry-notice h3 {
+        color: #c53030;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+
+      .expiry-notice p {
+        color: #742a2a;
+        font-size: 14px;
+      }
+
+      .troubleshooting {
+        background: #f0fff4;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #48bb78;
+        margin: 25px 0;
+      }
+
+      .troubleshooting h3 {
+        color: #2f855a;
+        font-size: 18px;
+        margin-bottom: 15px;
+      }
+
+      .troubleshooting p {
+        color: #2d3748;
+        margin-bottom: 10px;
+      }
+
+      .email-footer {
+        background: #2d3748;
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .footer-links {
+        margin: 20px 0;
+      }
+
+      .footer-link {
+        color: #a0aec0;
+        text-decoration: none;
+        margin: 0 15px;
+        font-size: 14px;
+      }
+
+      .copyright {
+        font-size: 12px;
+        color: #a0aec0;
+        margin-top: 20px;
+      }
+
+      @media (max-width: 600px) {
+        .email-content {
+          padding: 30px 20px;
+        }
+
+        .cta-button {
+          padding: 12px 25px;
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="email-header">
+        <h1>Verify Your Email Address</h1>
+        <p>
+          Complete your registration with
+          <span th:text="${applicationName}">Our Platform</span>
+        </p>
+      </div>
+
+      <div class="email-content">
+        <div class="verification-section">
+          <h2>Hello <span th:text="${user.username}">User</span>!</h2>
+          <p>
+            Thank you for registering with
+            <span th:text="${applicationName}">our platform</span>. To complete
+            your registration, please verify your email address.
+          </p>
+
+          <div class="verification-code">
+            <p>Click the button below to verify your email:</p>
+            <a th:href="${verificationUrl}" class="cta-button"
+              >Verify Email Address</a
+            >
+            <p style="font-size: 14px; color: #718096; margin-top: 10px">
+              Or copy and paste this link in your browser:<br />
+              <span
+                style="color: #2b6cb0; word-break: break-all"
+                th:text="${verificationUrl}"
+              ></span>
+            </p>
+          </div>
+        </div>
+
+        <div class="expiry-notice">
+          <h3>⏰ Important Notice</h3>
+          <p>
+            This verification link will expire in
+            <strong th:text="${expirationHours}">24</strong> hours.
+          </p>
+          <p>Please verify your email address before it expires.</p>
+        </div>
+
+        <div class="info-box">
+          <h3>Why verify your email?</h3>
+          <p>• Secure access to your account</p>
+          <p>• Receive important notifications</p>
+          <p>• Reset your password if needed</p>
+          <p>• Access all platform features</p>
+        </div>
+
+        <div class="troubleshooting">
+          <h3>Need help?</h3>
+          <p>
+            If you didn't create an account with us, please ignore this email.
+          </p>
+          <p>
+            If the button doesn't work, try copying the link into your web
+            browser.
+          </p>
+          <p>
+            If you continue to have problems, please contact our support team.
+          </p>
+        </div>
+      </div>
+
+      <div class="email-footer">
+        <p>Having trouble with verification?</p>
+        <div class="footer-links">
+          <a href="#" class="footer-link">Contact Support</a>
+          <a href="#" class="footer-link">Help Center</a>
+        </div>
+        <div class="copyright">
+          © 2024 <span th:text="${applicationName}">Our Platform</span>. All
+          rights reserved.<br />
+          This is an automated message, please do not reply to this email.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

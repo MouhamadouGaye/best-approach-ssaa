@@ -1,0 +1,36 @@
+<div class="signature-canvas-container">
+  <canvas
+    #canvas
+    [width]="width"
+    [height]="height"
+    (mousedown)="onMouseDown($event)"
+    (mousemove)="onMouseMove($event)"
+    (mouseup)="onMouseUp()"
+    (mouseleave)="onMouseLeave()"
+    (touchstart)="onTouchStart($event)"
+    (touchmove)="onTouchMove($event)"
+    (touchend)="onTouchEnd($event)"
+  ></canvas>
+  <div class="controls">
+    <button type="button" mat-button class="clear-btn" (click)="clear()">
+      Clear
+    </button>
+    <button
+      type="button"
+      mat-raised-button
+      color="primary"
+      class="save-btn"
+      (click)="save()"
+    >
+      Save Signature
+    </button>
+  </div>
+</div>
+<!-- ----------------------------------- -->
+<!-- <div class="signature-wrapper">
+  <canvas #signatureCanvas class="signature-canvas"></canvas>
+  <div class="actions">
+    <button mat-button color="warn" (click)="clear()">Clear</button>
+    <button mat-raised-button color="primary" (click)="save()">Save</button>
+  </div>
+</div> -->

@@ -1,0 +1,55 @@
+/* notification-styles.scss - Include this in your global styles */
+
+// Success notification
+.success-notification {
+    background-color: #43a047;
+    color: white;
+    
+    .mat-button {
+      color: white;
+    }
+  }
+  
+  // Error notification
+  .error-notification {
+    background-color: #d32f2f;
+    color: white;
+    
+    .mat-button {
+      color: white;
+    }
+  }
+  
+  // Warning notification
+  .warning-notification {
+    background-color: #ffa000;
+    color: white;
+    
+    .mat-button {
+      color: white;
+    }
+  }
+  
+  // Info notification
+  .info-notification {
+    background-color: #2196f3;
+    color: white;
+    
+    .mat-button {
+      color: white;
+    }
+  }
+  
+  // Common styles for all notifications
+  .success-notification,
+  .error-notification,
+  .warning-notification,
+  .info-notification {
+    .mat-simple-snackbar {
+      font-weight: 500;
+    }
+    
+    .mat-simple-snackbar-action {
+      font-weight: 700;
+    }
+  }

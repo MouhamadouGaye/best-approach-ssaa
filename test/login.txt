@@ -1,0 +1,19 @@
+curl -X POST http://localhost:8080/api/users/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"kobe@gmail.com","password":"kobe1234"}'
+
+
+  {
+    "user":{
+        "email":"hawa@gmail.com","id":3,"username":"hawa"
+        },
+    "token":"eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJNQU5BR0VSIl0sInN1YiI6Imhhd2FAZ21haWwuY29tIiwiaWF0IjoxNzU1NDU3OTU3LCJleHAiOjE3NTU0NjE1NTd9.L9785mSWxUKZmGpKxqcAIS-roPOMWVZRelZTmye18aE"}%    
+
+
+
+
+  curl -X POST http://localhost:8080/api/users/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test4@gmail.com","password":"test41234"}'
+
+    

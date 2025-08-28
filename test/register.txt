@@ -1,0 +1,27 @@
+curl -X POST http://localhost:8080/api/users/register \
+  -H "Content-Type: application/json" \
+  -d '{ "username": "test12", "email":"test12@gmail.com","password":"test121234"}'
+
+
+  curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "mouhamadou.gayZ@gmail.com",
+    "password": "Mouhamadou@1234"
+  }'
+
+  curl -X POST http://localhost:8080/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "Mouhamadou",
+    "email": "mouhamadou.gayZ@gmail.com",
+    "password": "Mouhamadou@1234"
+  }'
+
+
+  curl -X POST "http://localhost:8080/api/verification/reset-password?token=YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "newPassword": "NewPassword123!",
+    "confirmPassword": "NewPassword123!"
+  }'

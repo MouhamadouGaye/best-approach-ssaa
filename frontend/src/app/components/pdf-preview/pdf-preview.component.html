@@ -1,0 +1,74 @@
+<!-- <div *ngIf="pdfSrc">
+  <pdf-viewer
+    #pdfViewer
+    [src]="pdfSrc"
+    [render-text]="true"
+    (after-load-complete)="onPdfLoadComplete($event)"
+    style="display: block; width: 100%; height: 90vh"
+  ></pdf-viewer>
+
+  <button (click)="onPlaceSignature()" class="sign-button">
+    Sign at Bottom
+  </button>
+</div> -->
+<!-- -------------------------------------------------- -->
+<!-- 
+<div *ngIf="pdfSrc">
+
+  <pdf-viewer
+    [src]="pdfSrc"
+    [render-text]="true"
+    style="display: block; width: 100%; height: 80vh"
+    [page]="currentPage"
+    (after-load-complete)="onPdfLoadComplete($event)"
+    (page-change)="onPageChange($event)"
+  ></pdf-viewer>
+
+
+  <div class="navigation">
+    <button (click)="onPreviousPage()" [disabled]="currentPage === 1">
+      Previous Page
+    </button>
+    <button (click)="onNextPage()" [disabled]="currentPage === totalPages">
+      Next Page
+    </button>
+  </div>
+
+
+  <button (click)="onPlaceSignature()" class="sign-button">
+    Place Signature
+  </button>
+</div> -->
+<!-- ---------------------------------------------- -->
+
+<div *ngIf="pdfSrc">
+  <!-- <pdf-viewer
+    [src]="pdfSrc"
+    [render-text]="true"
+    [page]="currentPage"
+    (after-load-complete)="onPdfLoadComplete($event)"
+    (page-change)="onPageChange($event)"
+    style="display: block; width: 100%; height: 80vh"
+  ></pdf-viewer> -->
+
+  <pdf-viewer
+    [src]="pdfSrc"
+    [render-text]="true"
+    (after-load-complete)="onPdfLoadComplete($event)"
+    style="width: 100%; height: 90vh"
+  ></pdf-viewer>
+
+  <!-- Signature Controls -->
+  <div class="signature-section">
+    <app-signature-canvas
+      (signatureSaved)="onSignatureCaptured($event)"
+    ></app-signature-canvas>
+    <button
+      (click)="onPlaceSignature()"
+      class="sign-button"
+      [disabled]="!signatureData"
+    >
+      Place Signature on Page {{ currentPage }}
+    </button>
+  </div>
+</div>

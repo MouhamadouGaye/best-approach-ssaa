@@ -1,0 +1,380 @@
+/* File: app/components/document-list/document-list.component.scss */
+.document-list-container {
+  padding: 20px;
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 160px);
+}
+
+.document-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h2 {
+    font-size: 24px;
+    margin: 0;
+    color: #2c3e50;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+
+  button {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+
+    i {
+      margin-right: 8px;
+    }
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .refresh-btn {
+    background-color: #f1f2f6;
+    color: #555;
+
+    &:hover {
+      background-color: #e6e8ed;
+    }
+  }
+
+  .upload-btn {
+    background-color: #4070f4;
+    color: white;
+
+    &:hover {
+      background-color: #3060e0;
+    }
+  }
+}
+
+.filters-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+
+    label {
+      margin-right: 10px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    select {
+      padding: 8px 12px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      background-color: white;
+      font-size: 14px;
+      cursor: pointer;
+
+      &:focus {
+        outline: none;
+        border-color: #4070f4;
+      }
+    }
+  }
+
+  .sort-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    span {
+      color: #555;
+      font-weight: 500;
+    }
+
+    button {
+      background: none;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+
+      i {
+        margin-left: 6px;
+      }
+
+      &.active {
+        background-color: #f0f4ff;
+        border-color: #4070f4;
+        color: #4070f4;
+      }
+
+      &:hover {
+        background-color: #f5f7ff;
+      }
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(64, 112, 244, 0.2);
+    border-radius: 50%;
+    border-top-color: #4070f4;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  p {
+    color: #666;
+    font-size: 16px;
+  }
+}
+
+.error-message {
+  background-color: #fff0f0;
+  border-left: 4px solid #ff4d4d;
+  padding: 16px;
+  margin: 20px 0;
+  border-radius: 4px;
+
+  p {
+    color: #d32f2f;
+    margin: 0 0 10px 0;
+  }
+
+  button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+
+    &:hover {
+      background-color: #e53935;
+    }
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  .empty-icon {
+    font-size: 48px;
+    color: #ccc;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    margin: 0 0 8px 0;
+    color: #333;
+  }
+
+  p {
+    color: #666;
+    text-align: center;
+    max-width: 400px;
+    margin-bottom: 24px;
+  }
+
+  button {
+    background-color: #4070f4;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #3060e0;
+    }
+  }
+}
+
+.document-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.document-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+
+    .document-actions {
+      opacity: 1;
+    }
+  }
+
+  .document-icon {
+    font-size: 32px;
+    color: #4070f4;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .document-info {
+    flex: 1;
+  }
+
+  .document-title {
+    font-size: 16px;
+    margin: 0 0 8px 0;
+    color: #333;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .document-date {
+    font-size: 13px;
+    color: #777;
+    margin: 0 0 10px 0;
+  }
+
+  .document-status {
+    span {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: capitalize;
+    }
+
+    .status-signed {
+      background-color: #e6f7ee;
+      color: #00a86b;
+    }
+
+    .status-pending {
+      background-color: #fff8e6;
+      color: #f9a825;
+    }
+
+    .status-default {
+      background-color: #e6f0ff;
+      color: #4070f4;
+    }
+  }
+
+  .document-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+    opacity: 0;
+    transition: opacity 0.2s;
+
+    button {
+      background: none;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+
+      i {
+        font-size: 14px;
+      }
+
+      &.sign-btn {
+        width: auto;
+        padding: 0 12px;
+        background-color: #4070f4;
+        border-color: #4070f4;
+        color: white;
+
+        i {
+          margin-right: 6px;
+        }
+
+        &:hover {
+          background-color: #3060e0;
+        }
+      }
+
+      &.download-btn {
+        color: #4070f4;
+
+        &:hover {
+          background-color: #f0f4ff;
+          border-color: #4070f4;
+        }
+      }
+
+      &.delete-btn {
+        color: #ff4d4d;
+
+        &:hover {
+          background-color: #fff0f0;
+          border-color: #ff4d4d;
+        }
+      }
+    }
+  }
+}
