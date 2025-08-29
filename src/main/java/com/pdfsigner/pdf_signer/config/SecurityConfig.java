@@ -167,6 +167,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.pdfsigner.pdf_signer.service.MyUserDetailsService;
 import com.pdfsigner.pdf_signer.util.JwtUtil;
@@ -183,6 +185,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final MyUserDetailsService userDetailsService;
+    private final CustomAuthenticationEntryPoint authEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -198,11 +201,14 @@ public class SecurityConfig {
                                 "/api/verification/verify-email",
                                 "/api/verification/forgot-password",
                                 "/api/verification/reset-password", // Allow both GET and POST
+                                "/api/documents",
+                                "api/docs/**",
                                 "/error")
                         .permitAll()
                         .requestMatchers("/api/auth/me", "/api/auth/profile").authenticated()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated())
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -250,4 +256,16 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
+    // @Bean
+    // public WebMvcConfigurer cors() {
+    // return new WebMvcConfigurer() {
+    // @Override public void addCorsMappings(CorsRegistry r) {
+    // r.addMapping("/api/**")
+    // .allowedOrigins("https://your-frontend.com")
+    // .allowedMethods("GET","POST","PUT","DELETE")
+    // .allowCredentials(true);
+    // }
+    // };
+    // }
 }

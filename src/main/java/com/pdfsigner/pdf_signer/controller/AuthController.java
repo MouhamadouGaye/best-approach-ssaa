@@ -1,9 +1,12 @@
 package com.pdfsigner.pdf_signer.controller;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,7 +43,10 @@ import com.pdfsigner.pdf_signer.request.LoginRequest;
 import com.pdfsigner.pdf_signer.service.AuthService;
 import com.pdfsigner.pdf_signer.service.EmailService;
 import com.pdfsigner.pdf_signer.service.TokenService;
+import com.pdfsigner.pdf_signer.util.JwtUtil;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -59,6 +65,7 @@ public class AuthController {
         private final EmailService emailService;
         private final UserRepository userRepository;
         private final PasswordEncoder passwordEncoder;
+        private final JwtUtil jwtUtil;
 
         // Register new user
         @PostMapping("/register")
@@ -75,18 +82,116 @@ public class AuthController {
                                                 .build());
         }
 
-        // User login
+        // // User login
+        // @PostMapping("/login")
+        // public ResponseEntity<ApiResponse> login(
+        // @Valid @RequestBody LoginRequest request) {
+
+        // LoginResponse loginResponse = authService.loginUser(request);
+
+        // return ResponseEntity.ok(ApiResponse.builder()
+        // .success(true)
+        // .message("Login successful")
+        // .data(loginResponse)
+        // .build());
+        // }
+
+        // @PostMapping("/login")
+        // public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest
+        // request) {
+        // LoginResponse user = authService.loginUser(request); // your validations,
+        // checks, etc.
+
+        // String accessToken = jwtUtil.generateToken(user, Duration.ofMinutes(15));
+        // String refreshToken = jwtUtil.generateRefreshToken(user, Duration.ofDays(7));
+        // refreshTokenService.store(user, refreshToken); // persist/rotate, tie to
+        // device, etc.
+
+        // // HttpOnly Refresh cookie (not readable by JS)
+        // ResponseCookie refreshCookie = ResponseCookie.from("refresh_token",
+        // refreshToken)
+        // .httpOnly(true)
+        // .secure(true) // true in prod (HTTPS)
+        // .sameSite("Strict") // or "Lax" if you need cross-site flows
+        // .path("/api/auth") // limit scope
+        // .maxAge(Duration.ofDays(7))
+        // .build();
+
+        // // OPTION A (recommended): return access token in body (client keeps in
+        // memory)
+        // LoginResponse body = LoginResponse.builder()
+        // .accessToken(accessToken)
+        // .tokenType("Bearer")
+        // .expiresIn(900)
+        // .user(convertToDto(user))
+        // .build();
+
+        // return ResponseEntity.ok()
+        // .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+        // .body(body);
+        // }
+
+        // @PostMapping("/login")
+        // public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request,
+        // HttpServletResponse response) {
+        // LoginResponse loginResponse = authService.loginUser(request);
+
+        // User user = loginResponse.getUser(); // convert back if needed
+
+        // // Generate JWT for HttpOnly cookie
+        // String jwtToken = jwtUtil.generateToken(user);
+
+        // // Create HttpOnly cookie with JWT
+        // ResponseCookie jwtCookie = ResponseCookie.from("jwt",
+        // loginResponse.getAccessToken())
+        // .httpOnly(true)
+        // .secure(true) // only over HTTPS
+        // .path("/") // valid for the whole API
+        // .sameSite("Strict") // or "Lax"
+        // .maxAge(Duration.ofSeconds(loginResponse.getExpiresIn()))
+        // .build();
+
+        // response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+
+        // // You can still return user info, but NOT the token
+        // return ResponseEntity.ok(LoginResponse.builder()
+        // .user(loginResponse.getUser())
+        // .expiresIn(loginResponse.getExpiresIn())
+        // .tokenType("Bearer")
+        // .build());
+        // }
+
         @PostMapping("/login")
-        public ResponseEntity<ApiResponse> login(
-                        @Valid @RequestBody LoginRequest request) {
+        public ResponseEntity<LoginResponse> login(
+                        @RequestBody LoginRequest request,
+                        HttpServletResponse response) {
 
-                LoginResponse loginResponse = authService.loginUser(request);
+                // Validate credentials and get the User entity
+                User user = authService.validateAndGetUser(request); // could be your loginUser()
 
-                return ResponseEntity.ok(ApiResponse.builder()
-                                .success(true)
-                                .message("Login successful")
-                                .data(loginResponse)
-                                .build());
+                // Generate JWT for HttpOnly cookie
+                String jwtToken = jwtUtil.generateToken(user);
+
+                ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwtToken)
+                                .httpOnly(true)
+                                .secure(true)
+                                .path("/")
+                                .sameSite("Strict")
+                                .maxAge(Duration.ofSeconds(jwtUtil.getExpirationTimeSeconds()))
+                                .build();
+
+                response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+
+                // Convert User to DTO
+                UserDto userDto = convertToDto(user);
+
+                LoginResponse loginResponse = LoginResponse.builder()
+                                .user(userDto)
+                                .expiresIn(jwtUtil.getExpirationTimeSeconds())
+                                .tokenType("Bearer")
+                                .build();
+
+                return ResponseEntity.ok(loginResponse);
         }
 
         // Verify email address
@@ -255,4 +360,19 @@ public class AuthController {
                                 .enabled(user.isEnabled())
                                 .build();
         }
+
+        @PostMapping("/logout")
+        public ResponseEntity<Void> logout(HttpServletRequest request) {
+                // cookieUtil.read(request,
+                // "refresh_token").ifPresent(refreshTokenService::revoke);
+
+                ResponseCookie clearRefresh = ResponseCookie.from("refresh_token", "")
+                                .httpOnly(true).secure(true).sameSite("Strict").path("/api/auth")
+                                .maxAge(0).build();
+
+                return ResponseEntity.noContent()
+                                .header(HttpHeaders.SET_COOKIE, clearRefresh.toString())
+                                .build();
+        }
+
 }

@@ -184,6 +184,45 @@ public class AuthService {
         return processSuccessfulLogin(user, request);
     }
 
+    @Transactional
+    public User validateAndGetUser(LoginRequest request) {
+        log.info("Login attempt for email: {}", request.getEmail());
+
+        // Validate input
+        validateLoginRequest(request);
+
+        // Find user by email
+        User user = userRepository.findByEmailWithRoles(request.getEmail().toLowerCase().trim())
+                .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
+
+        // Check if account is enabled
+        if (!user.isEnabled()) {
+            throw new AccountNotVerifiedException("Please verify your email address before logging in");
+        }
+
+        // Check if account is locked
+        if (!user.isAccountNonLocked()) {
+            throw new AccountLockedException("Account is locked. Please contact support");
+        }
+
+        // Check if credentials are still valid
+        if (!user.isCredentialsNonExpired()) {
+            throw new CredentialsExpiredException("Your password has expired. Please reset it");
+        }
+
+        // Verify password
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            handleFailedLoginAttempt(user);
+            throw new BadCredentialsException("Invalid email or password");
+        }
+
+        // Update last login time
+        user.setLastLoginAt(LocalDateTime.now());
+        userRepository.save(user);
+
+        return user; // Return the User entity for token generation
+    }
+
     private void validateLoginRequest(LoginRequest request) {
         if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
             throw new IllegalArgumentException("Email is required");
@@ -229,7 +268,6 @@ public class AuthService {
 
     private LoginResponse buildLoginResponse(User user, String accessToken) {
         return LoginResponse.builder()
-                .accessToken(accessToken)
                 .tokenType("Bearer")
                 .expiresIn(jwtUtil.getExpirationTimeSeconds()) // e.g., 3600 seconds
                 .user(convertToDto(user))

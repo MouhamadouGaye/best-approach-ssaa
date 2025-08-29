@@ -51,6 +51,10 @@ import { MatInputModule } from '@angular/material/input';
           <mat-card-title>Log In</mat-card-title>
         </mat-card-header>
         <mat-card-content>
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Email</mat-label>
@@ -137,12 +141,17 @@ import { MatInputModule } from '@angular/material/input';
       .forgot-password {
         padding: 20px;
       }
+      .error-message {
+        color: red;
+        padding: 10px;
+      }
     `,
   ],
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   isLoading = false;
+  errorMessage: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -162,29 +171,70 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  // onSubmit(): void {
+  //   if (this.loginForm.valid) {
+  //     this.isLoading = true;
+  //     const { email, password } = this.loginForm.value;
+  //     console.log('Form values:', { email, password });
+
+  //     this.authService.login(email, password).subscribe({
+  //       next: () => {
+  //         this.isLoading = false;
+  //         this.router.navigate(['/']);
+  //       },
+  //       error: (error) => {
+  //         this.isLoading = false;
+  //         console.error('Login error in component:', error);
+
+  //         const errorMessage =
+  //           error.message || 'Login failed. Please check your credentials.';
+  //         this.snackBar.open(errorMessage, 'Close', {
+  //           duration: 5000,
+  //           panelClass: ['error-snackbar'],
+  //         });
+  //       },
+  //     });
+  //   }
+  // }
+
+  // onSubmit(): void {
+  //   if (this.loginForm.invalid) {
+  //     return;
+  //   }
+
+  //   const { email, password } = this.loginForm.value;
+
+  //   this.authService.login(email, password).subscribe({
+  //     next: () => {
+  //       console.log('✅ Login successful');
+  //       // e.g., navigate to dashboard
+  //       this.router.navigate(['/']);
+  //     },
+  //     error: (err) => {
+  //       console.error('❌ Login failed', err);
+  //       this.errorMessage = err.message || 'Login failed. Please try again.';
+  //     },
+  //   });
+  // }
+
   onSubmit(): void {
-    if (this.loginForm.valid) {
-      this.isLoading = true;
-      const { email, password } = this.loginForm.value;
-      console.log('Form values:', { email, password });
+    if (this.loginForm.invalid) return;
 
-      this.authService.login(email, password).subscribe({
-        next: () => {
-          this.isLoading = false;
-          this.router.navigate(['/']);
-        },
-        error: (error) => {
-          this.isLoading = false;
-          console.error('Login error in component:', error);
+    const { email, password } = this.loginForm.value;
 
-          const errorMessage =
-            error.message || 'Login failed. Please check your credentials.';
-          this.snackBar.open(errorMessage, 'Close', {
-            duration: 5000,
-            panelClass: ['error-snackbar'],
-          });
-        },
-      });
-    }
+    this.isLoading = true;
+
+    this.authService.login(email, password).subscribe({
+      next: () => {
+        this.isLoading = false;
+        console.log('✅ Login successful');
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('❌ Login failed', err);
+        this.errorMessage = err.message || 'Login failed. Please try again.';
+      },
+    });
   }
 }

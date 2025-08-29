@@ -101,6 +101,8 @@ package com.pdfsigner.pdf_signer.util;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -113,8 +115,6 @@ import com.pdfsigner.pdf_signer.model.User;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Date;
-import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -322,4 +322,5 @@ public class JwtUtil {
             throw new JwtException("JWT token compact of handler are invalid", e);
         }
     }
+
 }
